@@ -16,11 +16,11 @@ Service for generating nice [SVG pictures from LaTeX equations](https://tex.s2cm
 Deploy files:
 
 ```
-git clone git@github.com:parpalak/tex.s2cms.ru.git
-cd tex.s2cms.ru
+git clone git@github.com:ikto/tex-for-web.git
+cd tex-for-web
 npm install
 composer install
-bower install
+node_modules/.bin/bower install
 grunt
 ```
 
