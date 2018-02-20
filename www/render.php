@@ -14,16 +14,38 @@ require '../config.php';
 $isDebug = defined('DEBUG') && DEBUG;
 error_reporting($isDebug ? E_ALL : -1);
 
+if (!defined('LATEX_BINARY')) {
+    define('LATEX_BINARY', realpath(TEX_PATH) . '/latex');
+}
+if (!defined('DVISVGM_BINARY')) {
+    define('DVISVGM_BINARY', realpath(TEX_PATH) . '/dvisvgm');
+}
+if (!defined('DVIPNG_BINARY')) {
+    define('DVIPNG_BINARY', realpath(TEX_PATH) . '/dvipng');
+}
+if (!defined('SVGO_BINARY')) {
+    define('SVGO_BINARY', realpath(SVGO_PATH) . '/svgo');
+}
+if (!defined('GZIP_BINARY')) {
+    define('GZIP_BINARY', 'gzip');
+}
+if (!defined('OPTIPNG_BINARY')) {
+    define('OPTIPNG_BINARY', 'optipng');
+}
+if (!defined('PNGOUT_BINARY')) {
+    define('PNGOUT_BINARY', 'pngout');
+}
+
 // Setting up external commands
-define('LATEX_COMMAND', TEX_PATH . 'latex -output-directory=' . TMP_DIR);
-define('DVISVG_COMMAND', TEX_PATH . 'dvisvgm %1$s -o %1$s.svg -n --exact -v0 --relative --zoom=' . OUTER_SCALE);
-// define('DVIPNG_COMMAND', TEX_PATH . 'dvipng -T tight %1$s -o %1$s.png -D ' . (96 * OUTER_SCALE)); // outdated
+define('LATEX_COMMAND', LATEX_BINARY . ' -output-directory=' . TMP_DIR);
+define('DVISVG_COMMAND', DVISVGM_BINARY . ' %1$s -o %1$s.svg -n --exact -v0 --relative --zoom=' . OUTER_SCALE);
+// define('DVIPNG_COMMAND', DVIPNG_BINARY . ' -T tight %1$s -o %1$s.png -D ' . (96 * OUTER_SCALE)); // outdated
 define('SVG2PNG_COMMAND', 'rsvg-convert %1$s.svg -d 96 -p 96 -b white'); // stdout
 
-define('SVGO', realpath(SVGO_PATH) . '/svgo -i %1$s -o %1$s.new; rm %1$s; mv %1$s.new %1$s');
-define('GZIP', 'gzip -cn6 %1$s > %1$s.gz.new; rm %1$s.gz; mv %1$s.gz.new %1$s.gz');
-define('OPTIPNG', 'optipng %1$s');
-define('PNGOUT', 'pngout %1$s');
+define('SVGO_COMMAND', SVGO_BINARY . ' -i %1$s -o %1$s.new; rm %1$s; mv %1$s.new %1$s');
+define('GZIP_COMMAND', GZIP_BINARY . ' -cn6 %1$s > %1$s.gz.new; rm %1$s.gz; mv %1$s.gz.new %1$s.gz');
+define('OPTIPNG_COMMAND', OPTIPNG_BINARY . ' %1$s');
+define('PNGOUT_COMMAND', PNGOUT_BINARY . ' %1$s');
 
 function error400($error = 'Invalid formula')
 {
@@ -49,10 +71,10 @@ if (defined('LOG_DIR')) {
 
 $processor = new \S2\Tex\Processor($renderer, CACHE_SUCCESS_DIR, CACHE_FAIL_DIR);
 $processor
-	->addSVGCommand(SVGO)
-	->addSVGCommand(GZIP)
-	->addPNGCommand(OPTIPNG)
-	->addPNGCommand(PNGOUT)
+	->addSVGCommand(SVGO_COMMAND)
+	->addSVGCommand(GZIP_COMMAND)
+	->addPNGCommand(OPTIPNG_COMMAND)
+	->addPNGCommand(PNGOUT_COMMAND)
 ;
 
 try {
